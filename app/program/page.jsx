@@ -18,17 +18,19 @@ function Search() {
     setSelectedZone(zone || "");
   }, []);
 
-  // Fetch programs from API with fallback
+  // Fetch programs from dedicated API with fallback
   useEffect(() => {
     const fetchPrograms = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/public/candidates');
+        const params = new URLSearchParams();
+        if (selectedZone) params.set('zone', selectedZone);
+        
+        const response = await fetch(`/api/public/programs?${params}`);
         if (response.ok) {
           const data = await response.json();
-          if (data.success && Array.isArray(data.candidates)) {
-            const processedPrograms = processPrograms(data.candidates);
-            setPrograms(processedPrograms);
+          if (data.success && Array.isArray(data.programs)) {
+            setPrograms(data.programs);
             setUsingFallback(false);
             setLoading(false);
             return;
@@ -46,7 +48,7 @@ function Search() {
     };
 
     fetchPrograms();
-  }, []);
+  }, [selectedZone]);
 
   const processPrograms = (candidateData) => {
     const programFields = [
@@ -158,7 +160,7 @@ function Search() {
                       {item.category}
                     </h1>
                     <h1 className="text-primary font-semibold">
-                      {item.candidates.length} Candidates
+                      {item.candidateCount ?? item.count ?? item.candidates?.length ?? 0} Candidates
                     </h1>
                   </div>
                   <div className="line-clamp-2 border-2 h-16 p-3 my-2 border-primary flex items-center justify-center rounded-xl border-dashed w-full">

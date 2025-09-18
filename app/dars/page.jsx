@@ -18,17 +18,20 @@ function DarsWise() {
     setSelectedZone(zone || "");
   }, []);
 
-  // Fetch dars data from API with fallback
+  // Fetch dars data from dedicated API with fallback
   useEffect(() => {
     const fetchDarsData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/public/candidates');
+        const params = new URLSearchParams();
+        if (selectedZone) params.set('zone', selectedZone);
+        if (searchText) params.set('search', searchText);
+        
+        const response = await fetch(`/api/public/dars?${params}`);
         if (response.ok) {
           const data = await response.json();
-          if (data.success && Array.isArray(data.candidates)) {
-            const uniqueDars = getUniqueDars(data.candidates);
-            setDarsData(uniqueDars);
+          if (data.success && Array.isArray(data.dars)) {
+            setDarsData(data.dars);
             setUsingFallback(false);
             setLoading(false);
             return;
@@ -46,7 +49,7 @@ function DarsWise() {
     };
 
     fetchDarsData();
-  }, []);
+  }, [selectedZone, searchText]);
 
   const getUniqueDars = (candidateData) => {
     return Array.from(new Set(candidateData.map((item) => item.darsname))).map(
@@ -56,26 +59,10 @@ function DarsWise() {
     );
   };
 
-  // Filter data based on zone and search
+  // Since filtering is now done server-side for API data, just set filtered data
   useEffect(() => {
-    let results = darsData;
-    
-    // Filter by zone
-    if (selectedZone) {
-      results = results.filter((item) => 
-        item.zone.toLowerCase() === selectedZone.toLowerCase()
-      );
-    }
-    
-    // Filter by search term
-    if (searchText) {
-      results = results.filter((item) => 
-        item.darsname.toLowerCase().includes(searchText.toLowerCase())
-      );
-    }
-    
-    setFilteredData(results);
-  }, [selectedZone, searchText, darsData]);
+    setFilteredData(darsData);
+  }, [darsData]);
 
 
   const handleSearch = (e) => {

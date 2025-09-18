@@ -236,22 +236,34 @@ export class DatabaseStorage implements IStorage {
     // Get all program types from candidates data
     const allPrograms = [];
     
-    // Stage programs
-    const stagePrograms = await db
-      .select({
-        name: candidates.stage1,
-        type: sql<string>`'stage'`,
-        category: candidates.category,
-        zone: candidates.zone,
-        count: count()
-      })
-      .from(candidates)
-      .where(candidates.stage1.isNotNull())
-      .groupBy(candidates.stage1, candidates.category, candidates.zone);
+    const programFields = [
+      { field: 'stage1', type: 'stage' },
+      { field: 'stage2', type: 'stage' },
+      { field: 'stage3', type: 'stage' },
+      { field: 'groupstage1', type: 'groupstage' },
+      { field: 'groupstage2', type: 'groupstage' },
+      { field: 'groupstage3', type: 'groupstage' },
+      { field: 'offstage1', type: 'offstage' },
+      { field: 'offstage2', type: 'offstage' },
+      { field: 'offstage3', type: 'offstage' },
+      { field: 'groupoffstage', type: 'groupoffstage' }
+    ];
 
-    allPrograms.push(...stagePrograms);
+    for (const { field, type } of programFields) {
+      const programs = await db
+        .select({
+          program: candidates[field],
+          type: sql<string>`'${type}'`,
+          category: candidates.category,
+          zone: candidates.zone,
+          count: count()
+        })
+        .from(candidates)
+        .where(candidates[field].isNotNull())
+        .groupBy(candidates[field], candidates.category, candidates.zone);
 
-    // Add more program queries as needed for stage2, stage3, etc.
+      allPrograms.push(...programs);
+    }
     
     let filteredPrograms = allPrograms;
     
@@ -263,9 +275,17 @@ export class DatabaseStorage implements IStorage {
       filteredPrograms = filteredPrograms.filter(p => p.zone === zone);
     }
 
+    // Generate slug for each program
+    const generateSlug = (category: string, program: string) => {
+      const categorySlug = category.charAt(0);
+      const programSlug = program.slice(0, 2);
+      return categorySlug + programSlug;
+    };
+
     return filteredPrograms.map(item => ({
       ...item,
-      count: Number(item.count)
+      count: Number(item.count),
+      slug: generateSlug(item.category, item.program)
     }));
   }
 
