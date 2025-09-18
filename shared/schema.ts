@@ -2,7 +2,7 @@ import { pgTable, text, integer, timestamp, varchar, jsonb } from "drizzle-orm/p
 import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   username: varchar("username", { length: 50 }).notNull().unique(),
   password: text("password").notNull(),
   role: varchar("role", { length: 20 }).default("admin"),
@@ -10,7 +10,7 @@ export const users = pgTable("users", {
 });
 
 export const candidates = pgTable("candidates", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   code: varchar("code", { length: 10 }).notNull().unique(),
   name: text("name").notNull(),
   darsname: text("darsname").notNull(),
@@ -33,7 +33,7 @@ export const candidates = pgTable("candidates", {
 });
 
 export const programs = pgTable("programs", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
   category: varchar("category", { length: 20 }).notNull(),
   type: varchar("type", { length: 20 }).notNull(), // 'stage', 'offstage', 'group'
@@ -43,7 +43,7 @@ export const programs = pgTable("programs", {
 });
 
 export const darsData = pgTable("dars_data", {
-  id: integer("id").primaryKey(),
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   darsname: text("darsname").notNull().unique(),
   darsplace: text("darsplace"),
   zone: varchar("zone", { length: 50 }).notNull(),
