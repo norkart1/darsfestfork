@@ -1,10 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { authenticateUser, generateToken, createAdminUser } from '@/lib/auth';
-import { storage } from '@server/storage';
+import { authenticateUser, generateToken } from '@/lib/auth';
+import { loginSchema } from '@/lib/validation';
+
+// Rate limiting store (in production, use Redis)
+const loginAttempts = new Map<string, { count: number; lastAttempt: number }>();
 
 export async function POST(request: NextRequest) {
   try {
-    const { username, password } = await request.json();
+    const body = await request.json();
+    const validatedData = loginSchema.parse(body);
+    const { username, password } = validatedData;
+
+    // Simple rate limiting
+    const clientIp = request.ip || 'unknown';
+    const now = Date.now();
+    const attempts = loginAttempts.get(clientIp);
+    
+    if (attempts && attempts.count >= 5 && now - attempts.lastAttempt < 15 * 60 * 1000) {
+      return NextResponse.json(
+        { error: 'Too many login attempts. Please try again later.' },
+        { status: 429 }
+      );
+    }
 
     if (!username || !password) {
       return NextResponse.json(
@@ -13,11 +30,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if this is the first time - create default admin user
-    const existingAdmin = await storage.getUserByUsername('admin');
-    if (!existingAdmin && username === 'admin' && password === '123@Admin') {
-      await createAdminUser('admin', '123@Admin');
-    }
+    // No auto-provisioning - admin users must be created separately
 
     // Authenticate user
     const user = await authenticateUser(username, password);

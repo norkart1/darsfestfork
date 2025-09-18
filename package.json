@@ -10,7 +10,8 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "create-admin": "node scripts/create-admin.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
@@ -26,7 +27,8 @@
     "prisma": "^6.16.2",
     "react": "^18",
     "react-dom": "^18",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "zod": "^4.1.9"
   },
   "devDependencies": {
     "@types/react": "19.1.13",

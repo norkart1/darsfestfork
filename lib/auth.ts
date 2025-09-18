@@ -2,7 +2,11 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { storage } from '@server/storage';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'darsfest-jwt-secret-2024';
+const JWT_SECRET = process.env.JWT_SECRET;
+
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET environment variable is required but not set');
+}
 
 export interface AuthUser {
   id: number;
