@@ -1,55 +1,77 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Data from "../data/FullData.json";
 import Link from "next/link";
 import Headear from "@/components/Headear";
+import Data from "../data/FullData.json"; // Fallback data
+
 function Search() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null); // State to store the selected item
+  const [selectedItem, setSelectedItem] = useState(null);
   const [selectedZone, setSelectedZone] = useState("");
+  const [candidates, setCandidates] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [usingFallback, setUsingFallback] = useState(false);
 
+  // Load zone preference
+  useEffect(() => {
+    const zone = localStorage.getItem("zone");
+    setSelectedZone(zone || "");
+  }, []);
 
-  useEffect(()=>{
-    const zone = localStorage.getItem("zone")
+  // Fetch candidates from API with JSON fallback
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams();
+        if (searchTerm) params.append('search', searchTerm);
+        if (selectedZone) params.append('zone', selectedZone);
+        
+        const response = await fetch(`/api/public/candidates?${params}`);
+        if (response.ok) {
+          const data = await response.json();
+          setCandidates(Array.isArray(data) ? data : []);
+          setUsingFallback(false);
+        } else {
+          console.log('API unavailable, using local data fallback');
+          useFallbackData();
+        }
+      } catch (error) {
+        console.log('Database connection issue, using local data fallback');
+        useFallbackData();
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    setSelectedZone(zone)
-  })
-
-  const filteredData = Data.filter((item) => {
-    const searchFields = [
-      "code",
-      "name",
-      "darsname",
-      "category",
-      "offstage1",
-      "offstage2",
-      "offstage3",
-      "stage1",
-      "stage2",
-      "stage3",
-      "groupstage1",
-      "groupstage2",
-      "groupstage3",
-      "groupoffstage",
-    ];
-  
-    // Check if the selectedZone is not empty, and filter by zone if applicable
-    if (selectedZone) {
-      return (
-        item.zone.toLowerCase() === selectedZone.toLowerCase() &&
-        searchFields.some((field) => {
+    const useFallbackData = () => {
+      // Filter using original logic as fallback
+      const filteredData = Data.filter((item) => {
+        const searchFields = [
+          "code", "name", "darsname", "category", "offstage1", "offstage2", "offstage3",
+          "stage1", "stage2", "stage3", "groupstage1", "groupstage2", "groupstage3", "groupoffstage"
+        ];
+        
+        if (selectedZone && item.zone.toLowerCase() !== selectedZone.toLowerCase()) {
+          return false;
+        }
+        
+        if (!searchTerm) return true;
+        
+        return searchFields.some((field) => {
           const fieldValue = item[field] || "";
           return fieldValue.toLowerCase().includes(searchTerm.toLowerCase());
-        })
-      );
-    } else {
-      return searchFields.some((field) => {
-        const fieldValue = item[field] || "";
-        return fieldValue.toLowerCase().includes(searchTerm.toLowerCase());
+        });
       });
-    }
-  });
-  
+      
+      setCandidates(filteredData);
+      setUsingFallback(true);
+    };
+
+    fetchCandidates();
+  }, [searchTerm, selectedZone]);
+
+  const filteredData = candidates;
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -71,6 +93,11 @@ function Search() {
         <h1 className="text-center font-extrabold text-3xl text-primary mb-3">
           Candidate Search
         </h1>
+        {usingFallback && (
+          <div className="text-center text-sm text-amber-600 mb-2 bg-amber-50 px-3 py-1 rounded-lg">
+            📋 Using local data (database connection being established)
+          </div>
+        )}
         <input
           type="text"
           placeholder="Search by CODE, Name, Dars Name, etc."
@@ -81,18 +108,28 @@ function Search() {
        
 
         <div className="flex flex-wrap gap-2 justify-center mt-3">
-          {filteredData.map((item, index) => (
-            <div
-              className="w-72 bg-secondary p-6 rounded-xl flex flex-col gap-2 items-start cursor-pointer"
-              key={index}
-              onClick={() => openPopup(item)}
-            >
-              <h1 className="px-2 py-1 bg-primary inline rounded-lg text-white font-semibold">
-                {item.code}
-              </h1>
-              <p className="line-clamp-2 h-12">{item.name}</p>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-primary font-semibold">Loading candidates...</div>
             </div>
-          ))}
+          ) : filteredData.length === 0 ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="text-gray-500">No candidates found. Try adjusting your search.</div>
+            </div>
+          ) : (
+            filteredData.map((item, index) => (
+              <div
+                className="w-72 bg-secondary p-6 rounded-xl flex flex-col gap-2 items-start cursor-pointer"
+                key={item.id || index}
+                onClick={() => openPopup(item)}
+              >
+                <h1 className="px-2 py-1 bg-primary inline rounded-lg text-white font-semibold">
+                  {item.code}
+                </h1>
+                <p className="line-clamp-2 h-12">{item.name}</p>
+              </div>
+            ))
+          )}
         </div>
         {selectedItem && (
           <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center  items-center">

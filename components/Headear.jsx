@@ -1,47 +1,37 @@
 "use client"
 import Link from "next/link";
-import Data from "../data/FullData.json";
+import Data from "../data/FullData.json"; // Fallback data
 import React, { useEffect, useState } from 'react'
 
 const Headear = ({
     selectedZone , setSelectedZone
 }) => {
-    const [searchTerm, setSearchTerm] = useState("");
+    const [zones, setZones] = useState([]);
 
-    const filteredData = Data.filter((item) => {
-      const searchFields = [
-        "code",
-        "name",
-        "darsname",
-        "category",
-        "offstage1",
-        "offstage2",
-        "offstage3",
-        "stage1",
-        "stage2",
-        "stage3",
-        "groupstage1",
-        "groupstage2",
-        "groupstage3",
-        "groupoffstage",
-      ];
-    
-      // Check if the selectedZone is not empty, and filter by zone if applicable
-      if (selectedZone) {
-        return (
-          item.zone.toLowerCase() === selectedZone.toLowerCase() &&
-          searchFields.some((field) => {
-            const fieldValue = item[field] || "";
-            return fieldValue.toLowerCase().includes(searchTerm.toLowerCase());
-          })
-        );
-      } else {
-        return searchFields.some((field) => {
-          const fieldValue = item[field] || "";
-          return fieldValue.toLowerCase().includes(searchTerm.toLowerCase());
-        });
-      }
-    });
+    // Fetch zones from API with fallback
+    useEffect(() => {
+      const fetchZones = async () => {
+        try {
+          const response = await fetch('/api/public/candidates');
+          if (response.ok) {
+            const candidates = await response.json();
+            if (Array.isArray(candidates)) {
+              const uniqueZones = Array.from(new Set(candidates.map(item => item.zone)));
+              setZones(uniqueZones);
+              return;
+            }
+          }
+        } catch (error) {
+          console.log('Using fallback data for zones');
+        }
+        
+        // Fallback to JSON data
+        const fallbackZones = Array.from(new Set(Data.map(item => item.zone)));
+        setZones(fallbackZones);
+      };
+
+      fetchZones();
+    }, []);
   return (
     <div className="lg:fixed lg:right-20 lg:top-5 bg-white w-full lg:w-fit text-center rounded-full lg:p-4 px-4 p-10">
    
@@ -57,7 +47,7 @@ const Headear = ({
 >
   <option value="">All Zones</option>
   {/* Assuming the zones are available in your data */}
-  {Array.from(new Set(Data.map((item) => item.zone))).map((zone, index) => (
+  {zones.map((zone, index) => (
     <option key={index} value={zone}>
       {zone}
     </option>
