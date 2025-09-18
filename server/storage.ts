@@ -253,7 +253,7 @@ export class DatabaseStorage implements IStorage {
       const programs = await db
         .select({
           program: candidates[field],
-          type: sql<string>`'${type}'`,
+          type: sql<string>`${type}`,
           category: candidates.category,
           zone: candidates.zone,
           count: count()
