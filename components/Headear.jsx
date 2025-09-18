@@ -48,7 +48,7 @@ const Headear = ({
 
       
     <select
-  value={selectedZone}
+  value={selectedZone || ""}
   onChange={(e) => {
     localStorage.setItem("zone" ,e.target.value )
     setSelectedZone(e.target.value)
