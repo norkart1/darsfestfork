@@ -5,9 +5,6 @@
 .ggg p,td,th {
   border: 1px solid black;
 }
-* {
-  text-transform: uppercase;
-}
 
 @media print {
   @page {

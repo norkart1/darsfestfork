@@ -1,6 +1,6 @@
 import { users, candidates, programs, darsData, type User, type InsertUser, type Candidate, type InsertCandidate, type Program, type InsertProgram, type DarsData, type InsertDarsData } from "@shared/schema";
 import { db } from "./db";
-import { eq, like, or, count } from "drizzle-orm";
+import { eq, like, or, and, count } from "drizzle-orm";
 
 export interface IStorage {
   // User management
@@ -101,13 +101,17 @@ export class DatabaseStorage implements IStorage {
       like(candidates.darsname, `%${searchTerm}%`),
     ];
 
-    let query = db.select().from(candidates).where(or(...searchConditions));
+    const whereConditions = [or(...searchConditions)];
     
     if (zone) {
-      query = query.where(eq(candidates.zone, zone));
+      whereConditions.push(eq(candidates.zone, zone));
     }
 
-    return await query.orderBy(candidates.code);
+    return await db
+      .select()
+      .from(candidates)
+      .where(whereConditions.length === 1 ? whereConditions[0] : and(...whereConditions))
+      .orderBy(candidates.code);
   }
 
   // Program methods
@@ -178,14 +182,14 @@ export class DatabaseStorage implements IStorage {
       .groupBy(candidates.zone);
 
     return {
-      totalCandidates: totalCandidates[0]?.count || 0,
-      totalPrograms: totalPrograms[0]?.count || 0,
-      totalDars: totalDars[0]?.count || 0,
+      totalCandidates: Number(totalCandidates[0]?.count || 0),
+      totalPrograms: Number(totalPrograms[0]?.count || 0),
+      totalDars: Number(totalDars[0]?.count || 0),
       candidatesByCategory: Object.fromEntries(
-        candidatesByCategory.map(item => [item.category, item.count])
+        candidatesByCategory.map(item => [item.category, Number(item.count)])
       ),
       candidatesByZone: Object.fromEntries(
-        candidatesByZone.map(item => [item.zone, item.count])
+        candidatesByZone.map(item => [item.zone, Number(item.count)])
       ),
     };
   }

@@ -23,11 +23,14 @@ function DarsWise() {
   );
 
   useEffect(()=>{
-    const filteredResults =  uniqueData.filter((item) => {
-      return item.zone.toLowerCase() === selectedZone.toLowerCase()
-    });
-
-    setFilteredData(filteredResults)
+    if (selectedZone) {
+      const filteredResults =  uniqueData.filter((item) => {
+        return item.zone.toLowerCase() === selectedZone.toLowerCase()
+      });
+      setFilteredData(filteredResults)
+    } else {
+      setFilteredData(uniqueData)
+    }
   },[selectedZone])
 
 
