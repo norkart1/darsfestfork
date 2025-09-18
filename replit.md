@@ -42,15 +42,18 @@ This is a Next.js festival management application for Jamia Dars Fest 2023-'24. 
   sample.json - Sample data
 ```
 
-## Recent Changes (2024-09-18)
-- Successfully imported GitHub repository and configured for Replit environment
+## Recent Changes (2025-09-18)
+- Successfully imported fresh GitHub repository and configured for Replit environment
 - Installed all dependencies and Node.js types
 - Set up Next.js development server on 0.0.0.0:5000 with proper host configuration
 - Configured PostgreSQL database with Drizzle ORM schema sync
+- Fixed WebSocket compatibility issues by switching from @neondatabase/serverless to standard pg driver
+- Fixed Drizzle ORM API compatibility issues with isNotNull() function
 - Implemented robust fallback system using local JSON data when database unavailable
-- Fixed database connection issues and WebSocket compatibility
+- Added sample data to populate the application for testing
+- Fixed SQL parameter binding issues in programs API endpoint
 - Configured autoscale deployment with proper build settings
-- Application running successfully with graceful error handling
+- Application running successfully with full API functionality and error handling
 
 ## Dependencies
 - Next.js 14.0.0
