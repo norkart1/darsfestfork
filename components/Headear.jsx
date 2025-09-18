@@ -14,9 +14,9 @@ const Headear = ({
         try {
           const response = await fetch('/api/public/candidates');
           if (response.ok) {
-            const candidates = await response.json();
-            if (Array.isArray(candidates)) {
-              const uniqueZones = Array.from(new Set(candidates.map(item => item.zone)));
+            const data = await response.json();
+            if (data.success && Array.isArray(data.candidates)) {
+              const uniqueZones = Array.from(new Set(data.candidates.map(item => item.zone)));
               setZones(uniqueZones);
               return;
             }

@@ -30,8 +30,12 @@ function Search() {
         const response = await fetch(`/api/public/candidates?${params}`);
         if (response.ok) {
           const data = await response.json();
-          setCandidates(Array.isArray(data) ? data : []);
-          setUsingFallback(false);
+          if (data.success && Array.isArray(data.candidates)) {
+            setCandidates(data.candidates);
+            setUsingFallback(false);
+          } else {
+            throw new Error('Invalid API response format');
+          }
         } else {
           console.log('API unavailable, using local data fallback');
           useFallbackData();
