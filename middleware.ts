@@ -1,5 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import jwt from 'jsonwebtoken';
+
+interface AuthUser {
+  id: number;
+  username: string;
+  role: string;
+}
+
+function verifyTokenEdgeRuntime(token: string): AuthUser | null {
+  try {
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) return null;
+    
+    return jwt.verify(token, JWT_SECRET) as AuthUser;
+  } catch {
+    return null;
+  }
+}
 
 export function middleware(request: NextRequest) {
   // Protect admin routes
@@ -10,7 +27,7 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
 
-    const user = verifyToken(token);
+    const user = verifyTokenEdgeRuntime(token);
     if (!user || user.role !== 'admin') {
       return NextResponse.redirect(new URL('/admin', request.url));
     }
