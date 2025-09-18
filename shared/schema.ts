@@ -1,4 +1,4 @@
-import { pgTable, text, integer, timestamp, varchar, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, integer, timestamp, varchar, jsonb, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 export const users = pgTable("users", {
@@ -44,14 +44,16 @@ export const programs = pgTable("programs", {
 
 export const darsData = pgTable("dars_data", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  darsname: text("darsname").notNull().unique(),
+  darsname: text("darsname").notNull(),
   darsplace: text("darsplace"),
   zone: varchar("zone", { length: 50 }).notNull(),
   slug: varchar("slug", { length: 100 }),
   totalCandidates: integer("total_candidates").default(0),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
-});
+}, (table) => ({
+  uniqueDarsZone: unique().on(table.darsname, table.zone)
+}));
 
 // Relations
 export const usersRelations = relations(users, ({ many }) => ({
