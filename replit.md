@@ -1,74 +1,61 @@
 # Jamia Dars Fest 2023-'24
 
 ## Overview
-This is a Next.js web application for managing and displaying information about Jamia Dars Fest 2023-'24, an arts festival by Jami'a Nooriyya Arabic College. The application provides comprehensive search and filtering capabilities for candidates, programs, and dars (courses).
+This is a Next.js festival management application for Jamia Dars Fest 2023-'24. It provides candidate search, program listings, and dars-wise organization for an Arabic college arts festival. The app allows filtering by zones and categories (Junior/Senior).
 
 ## Current State
-✅ **Successfully configured for Replit environment**
-- Next.js 14.0.0 application
-- Running on port 5000 with proper host configuration (0.0.0.0)
-- All dependencies installed and working
-- Deployment configuration set up for production
+- **Status**: Fully configured and running in Replit environment
+- **Port**: 5000 (development server)
+- **Framework**: Next.js 14.0.0 with React 18, Tailwind CSS
+- **Deployment**: Configured for autoscale deployment
 
 ## Project Architecture
-
-### Tech Stack
-- **Frontend**: Next.js 14.0.0 with React 18
-- **Styling**: Tailwind CSS with custom theme
-- **Data**: Static JSON files (FullData.json, sample.json)
-- **Build System**: npm with Next.js toolchain
+- **Frontend**: Next.js App Router structure
+- **Styling**: Tailwind CSS with custom color scheme (primary: #186F65, secondary: #d5e5e3)
+- **Data**: JSON-based data storage in `/data/FullData.json`
+- **Components**: Reusable header component with zone filtering
 
 ### Key Features
-1. **Candidate Search** (`/`) - Search and filter candidates by various criteria
-2. **Program Search** (`/program`) - Browse programs with candidate counts
-3. **Dars Listings** (`/dars`) - Dars-wise program organization with Junior/Senior categories
-4. **Zone Filtering** - Filter all data by geographic zones using localStorage
-5. **Responsive Design** - Mobile-friendly interface with Tailwind CSS
+1. **Candidate Search**: Search by code, name, dars name, category, and programs
+2. **Program Search**: Browse programs by category with candidate counts
+3. **Dars Listings**: View programs organized by dars (courses) 
+4. **Zone Filtering**: Filter content by different geographic zones
+5. **Responsive Design**: Mobile-friendly interface
 
 ### File Structure
 ```
-app/
-├── dars/           # Dars listings and detail pages
-├── program/        # Program search and details
-├── page.jsx        # Main candidate search page
-├── layout.jsx      # Root layout with metadata
-└── globals.css     # Global styles and Tailwind imports
+/app
+  /dars - Dars-wise program listings
+    /jr/[slug] - Junior category pages
+    /sr/[slug] - Senior category pages
+  /program - Program search and details
+    /[slug] - Individual program pages
+  layout.jsx - Root layout
+  page.jsx - Main candidate search
+  globals.css - Global styles
 
-components/
-└── Headear.jsx     # Navigation header with zone selector
+/components
+  Headear.jsx - Navigation header with zone selector
 
-data/
-├── FullData.json   # Complete dataset
-└── sample.json     # Sample data subset
+/data
+  FullData.json - Complete dataset
+  sample.json - Sample data
 ```
 
-### Configuration
-- **Next.js Config**: Configured for Replit environment with proper headers
-- **Tailwind**: Custom color scheme (primary: #186F65, secondary: #d5e5e3)
-- **Package Scripts**: Modified to bind to 0.0.0.0:5000 for Replit compatibility
+## Recent Changes (2024-09-18)
+- Configured Next.js for Replit environment (0.0.0.0:5000 binding)
+- Fixed React warning for null select values
+- Set up development workflow
+- Configured deployment for autoscale
+- Updated package.json scripts for proper hosting
 
-## Recent Changes
-- **2024-09-18**: Initial Replit setup
-  - Fixed Next.js configuration for Replit environment
-  - Updated package.json scripts for proper host binding
-  - Fixed React warning for null select values
-  - Configured deployment settings for production
-  - Set up workflow for development server
+## Dependencies
+- Next.js 14.0.0
+- React 18
+- Tailwind CSS 3
+- ESLint + Next.js config
 
 ## User Preferences
-- No specific user preferences documented yet
-
-## Development
-- **Dev Server**: `npm run dev` (runs on 0.0.0.0:5000)
-- **Build**: `npm run build`
-- **Production**: `npm start`
-- **Linting**: `npm run lint`
-
-## Data Structure
-The application uses a JSON dataset with the following key fields:
-- `code`: Candidate identifier
-- `name`: Candidate name
-- `darsname`: Associated dars/course name
-- `zone`: Geographic zone
-- `category`: JUNIOR or SENIOR
-- Various stage and offstage program fields
+- Clean, functional setup without unnecessary additions
+- Maintain existing project structure and conventions
+- Focus on getting the application running properly in Replit

@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@shared/*": ["./shared/*"],
+      "@server/*": ["./server/*"]
     }
   }
 }

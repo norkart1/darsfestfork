@@ -6,12 +6,27 @@
     "dev": "next dev --hostname 0.0.0.0 --port 5000",
     "build": "next build",
     "start": "next start --hostname 0.0.0.0 --port 5000",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:push": "drizzle-kit push",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@prisma/client": "^6.16.2",
+    "@types/ws": "^8.18.1",
+    "bcryptjs": "^3.0.2",
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.5",
+    "jsonwebtoken": "^9.0.2",
     "next": "14.0.0",
+    "next-auth": "^4.24.11",
+    "pg": "^8.16.3",
+    "prisma": "^6.16.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "ws": "^8.18.3"
   },
   "devDependencies": {
     "autoprefixer": "^10",

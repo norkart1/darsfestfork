@@ -1,10 +1,11 @@
-modules = ["nodejs-20", "web"]
+modules = ["nodejs-20", "web", "postgresql"]
 
 [nix]
 channel = "stable-25_05"
 
 [agent]
 expertMode = true
+integrations = ["javascript_database:1.0.0"]
 
 [workflows]
 runButton = "Project"
@@ -40,5 +41,5 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["npm", "start"]
 build = ["npm", "run", "build"]
+run = ["npm", "run", "start"]
