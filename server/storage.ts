@@ -1,6 +1,6 @@
 import { users, candidates, programs, darsData, type User, type InsertUser, type Candidate, type InsertCandidate, type Program, type InsertProgram, type DarsData, type InsertDarsData } from "@shared/schema";
 import { db } from "./db";
-import { eq, like, or, and, count, sql } from "drizzle-orm";
+import { eq, like, or, and, count, sql, isNotNull } from "drizzle-orm";
 
 export interface IStorage {
   // User management
@@ -259,7 +259,7 @@ export class DatabaseStorage implements IStorage {
           count: count()
         })
         .from(candidates)
-        .where(candidates[field].isNotNull())
+        .where(isNotNull(candidates[field]))
         .groupBy(candidates[field], candidates.category, candidates.zone);
 
       allPrograms.push(...programs);

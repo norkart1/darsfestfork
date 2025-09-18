@@ -1,0 +1,40 @@
+[
+  {
+    "code": "SAMPLE001",
+    "name": "Sample Candidate",
+    "darsname": "Sample Dars",
+    "darsplace": "Sample Place",
+    "zone": "Zone A",
+    "slug": "sample-dars",
+    "category": "jr",
+    "stage1": "Sample Stage Program",
+    "stage2": null,
+    "stage3": null,
+    "groupstage1": "Sample Group Program",
+    "groupstage2": null,
+    "groupstage3": null,
+    "offstage1": "Sample Off-stage Program",
+    "offstage2": null,
+    "offstage3": null,
+    "groupoffstage": null
+  },
+  {
+    "code": "SAMPLE002", 
+    "name": "Another Candidate",
+    "darsname": "Another Dars",
+    "darsplace": "Another Place",
+    "zone": "Zone B",
+    "slug": "another-dars",
+    "category": "sr",
+    "stage1": "Another Stage Program",
+    "stage2": null,
+    "stage3": null,
+    "groupstage1": null,
+    "groupstage2": null,
+    "groupstage3": null,
+    "offstage1": null,
+    "offstage2": null,
+    "offstage3": null,
+    "groupoffstage": "Another Group Off-stage"
+  }
+]
